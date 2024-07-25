@@ -2,22 +2,22 @@ import { App, TFile } from 'obsidian';
 import OzanClearImages from './main';
 import { getAllLinkMatchesInFile, LinkMatch } from './linkDetector';
 
-/* ------------------ Image Handlers  ------------------ */
+/* ------------------ 图像处理程序  ------------------ */
 
 const imageRegex = /.*(jpe?g|png|gif|svg|bmp)/i;
 const bannerRegex = /!\[\[(.*?)\]\]/i;
 const imageExtensions: Set<string> = new Set(['jpeg', 'jpg', 'png', 'gif', 'svg', 'bmp']);
 
-// Create the List of Unused Images
+// 创建未使用图片的列表
 export const getUnusedAttachments = async (app: App, type: 'image' | 'all') => {
     var allAttachmentsInVault: TFile[] = getAttachmentsInVault(app, type);
     var unusedAttachments: TFile[] = [];
     var usedAttachmentsSet: Set<string>;
 
-    // Get Used Attachments in All Markdown Files
+    // 获取所有Markdown文件中使用的附件
     usedAttachmentsSet = await getAttachmentPathSetForVault(app);
 
-    // Compare All Attachments vs Used Attachments
+    // 比较所有附件和已使用的附件
     allAttachmentsInVault.forEach((attachment) => {
         if (!usedAttachmentsSet.has(attachment.path)) unusedAttachments.push(attachment);
     });
@@ -25,17 +25,17 @@ export const getUnusedAttachments = async (app: App, type: 'image' | 'all') => {
     return unusedAttachments;
 };
 
-// Getting all available images saved in vault
+// 获取Vault中所有可用的图片文件
 const getAttachmentsInVault = (app: App, type: 'image' | 'all'): TFile[] => {
     let allFiles: TFile[] = app.vault.getFiles();
     let attachments: TFile[] = [];
     for (let i = 0; i < allFiles.length; i++) {
         if (!['md', 'canvas'].includes(allFiles[i].extension)) {
-            // Only images
+            // 只获取图片
             if (imageExtensions.has(allFiles[i].extension.toLowerCase())) {
                 attachments.push(allFiles[i]);
             }
-            // All Files
+            // 所有文件
             else if (type === 'all') {
                 attachments.push(allFiles[i]);
             }
@@ -44,7 +44,7 @@ const getAttachmentsInVault = (app: App, type: 'image' | 'all'): TFile[] => {
     return attachments;
 };
 
-// New Method for Getting All Used Attachments
+// 获取Vault中所有已使用的附件路径
 const getAttachmentPathSetForVault = async (app: App): Promise<Set<string>> => {
     var attachmentsSet: Set<string> = new Set();
     var resolvedLinks = app.metadataCache.resolvedLinks;
@@ -57,13 +57,13 @@ const getAttachmentPathSetForVault = async (app: App): Promise<Set<string>> => {
             }
         }
     }
-    // Loop Files and Check Frontmatter/Canvas
+    // 遍历文件并检查Frontmatter/Canvas
     let allFiles = app.vault.getFiles();
     for (let i = 0; i < allFiles.length; i++) {
         let obsFile = allFiles[i];
-        // Check Frontmatter for md files and additional links that might be missed in resolved links
+        // 检查md文件的前言和可能未在resolved links中遗漏的附加链接
         if (obsFile.extension === 'md') {
-            // Frontmatter
+            // 前言
             let fileCache = app.metadataCache.getFileCache(obsFile);
             if (fileCache.frontmatter) {
                 let frontmatter = fileCache.frontmatter;
@@ -81,13 +81,13 @@ const getAttachmentPathSetForVault = async (app: App): Promise<Set<string>> => {
                     }
                 }
             }
-            // Any Additional Link
+            // 任何其他链接
             let linkMatches: LinkMatch[] = await getAllLinkMatchesInFile(obsFile, app);
             for (let linkMatch of linkMatches) {
                 addToSet(attachmentsSet, linkMatch.linkText);
             }
         }
-        // Check Canvas for links
+        // 检查Canvas中的链接
         else if (obsFile.extension === 'canvas') {
             let fileRead = await app.vault.cachedRead(obsFile);
             let canvasData = JSON.parse(fileRead);
@@ -113,9 +113,9 @@ const pathIsAnImage = (path: string) => {
     return path.match(imageRegex);
 };
 
-/* ------------------ Deleting Handlers  ------------------ */
+/* ------------------ 删除处理程序  ------------------ */
 
-// Clear Images From the Provided List
+// 从提供的列表中清除图片
 export const deleteFilesInTheList = async (
     fileList: TFile[],
     plugin: OzanClearImages,
@@ -126,7 +126,7 @@ export const deleteFilesInTheList = async (
     let textToView = '';
     for (let file of fileList) {
         if (fileIsInExcludedFolder(file, plugin)) {
-            console.log('File not referenced but excluded: ' + file.path);
+            console.log('文件未被引用但已排除: ' + file.path);
         } else {
             if (deleteOption === '.trash') {
                 await app.vault.trash(file, false);
@@ -144,14 +144,14 @@ export const deleteFilesInTheList = async (
     return { deletedImages, textToView };
 };
 
-// Check if File is Under Excluded Folders
+// 检查文件是否在排除的文件夹中
 const fileIsInExcludedFolder = (file: TFile, plugin: OzanClearImages): boolean => {
     var excludedFoldersSettings = plugin.settings.excludedFolders;
     var excludeSubfolders = plugin.settings.excludeSubfolders;
     if (excludedFoldersSettings === '') {
         return false;
     } else {
-        // Get All Excluded Folder Paths
+        // 获取所有排除的文件夹路径
         var excludedFolderPaths = new Set(
             excludedFoldersSettings.split(',').map((folderPath) => {
                 return folderPath.trim();
@@ -159,7 +159,7 @@ const fileIsInExcludedFolder = (file: TFile, plugin: OzanClearImages): boolean =
         );
 
         if (excludeSubfolders) {
-            // If subfolders included, check if any provided path partially match
+            // 如果包含子文件夹，检查任何提供的路径是否部分匹配
             for (let exludedFolderPath of excludedFolderPaths) {
                 var pathRegex = new RegExp(exludedFolderPath + '.*');
                 if (file.parent.path.match(pathRegex)) {
@@ -167,7 +167,7 @@ const fileIsInExcludedFolder = (file: TFile, plugin: OzanClearImages): boolean =
                 }
             }
         } else {
-            // Full path of parent should match if subfolders are not included
+            // 如果不包含子文件夹，父路径应完全匹配
             if (excludedFolderPaths.has(file.parent.path)) {
                 return true;
             }
@@ -177,7 +177,7 @@ const fileIsInExcludedFolder = (file: TFile, plugin: OzanClearImages): boolean =
     }
 };
 
-/* ------------------ Helpers  ------------------ */
+/* ------------------ 辅助函数  ------------------ */
 
 export const getFormattedDate = () => {
     let dt = new Date();

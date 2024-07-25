@@ -4,14 +4,21 @@ import { OzanClearImagesSettings, DEFAULT_SETTINGS } from './settings';
 import { LogsModal } from './modals';
 import * as Util from './util';
 
+// 定义OzanClearImages类，继承自Plugin类
 export default class OzanClearImages extends Plugin {
+    // 定义settings变量，用于存储插件设置
     settings: OzanClearImagesSettings;
+    // 定义ribbonIconEl变量，用于存储插件的图标元素
     ribbonIconEl: HTMLElement | undefined = undefined;
 
+    // 插件加载时调用
     async onload() {
-        console.log('Clear Unused Images plugin loaded...');
+        console.log('"Clear Unused Images 插件已加载..."');
+        // 添加设置选项卡
         this.addSettingTab(new OzanClearImagesSettingsTab(this.app, this));
+        // 加载设置
         await this.loadSettings();
+        // 添加命令
         this.addCommand({
             id: 'clear-images-obsidian',
             name: 'Clear Unused Images',
@@ -22,21 +29,26 @@ export default class OzanClearImages extends Plugin {
             name: 'Clear Unused Attachments',
             callback: () => this.clearUnusedAttachments('all'),
         });
+        // 刷新图标
         this.refreshIconRibbon();
     }
 
+    // 插件卸载时调用
     onunload() {
-        console.log('Clear Unused Images plugin unloaded...');
+        console.log('"Clear Unused Images 插件已卸载..."');
     }
 
+    // 加载设置
     async loadSettings() {
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
     }
 
+    // 保存设置
     async saveSettings() {
         await this.saveData(this.settings);
     }
 
+    // 刷新图标
     refreshIconRibbon = () => {
         this.ribbonIconEl?.remove();
         if (this.settings.ribbonIcon) {
@@ -46,7 +58,7 @@ export default class OzanClearImages extends Plugin {
         }
     };
 
-    // Compare Used Images with all images and return unused ones
+    // 比较已使用的图片和所有图片，返回未使用的图片
     clearUnusedAttachments = async (type: 'all' | 'image') => {
         var unusedAttachments: TFile[] = await Util.getUnusedAttachments(this.app, type);
         var len = unusedAttachments.length;
@@ -55,7 +67,8 @@ export default class OzanClearImages extends Plugin {
             logs += `[+] ${Util.getFormattedDate()}: Clearing started.</br>`;
             Util.deleteFilesInTheList(unusedAttachments, this, this.app).then(({ deletedImages, textToView }) => {
                 logs += textToView;
-                logs += '[+] ' + deletedImages.toString() + ' image(s) in total deleted.</br>';
+                logs += '[+] ' + deletedImages.toString() + ' 张图片已删除.</br>'
+;
                 logs += `[+] ${Util.getFormattedDate()}: Clearing completed.`;
                 if (this.settings.logsModal) {
                     let modal = new LogsModal(logs, this.app);
@@ -63,7 +76,8 @@ export default class OzanClearImages extends Plugin {
                 }
             });
         } else {
-            new Notice(`All ${type === 'image' ? 'images' : 'attachments'} are used. Nothing was deleted.`);
+            new Notice(`所有 ${type === 'image' ? '图片' : '附件'} 都在使用中。没有删除任何内容。`
+);
         }
     };
 }

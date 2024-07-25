@@ -1,6 +1,6 @@
 import { TFile, App } from 'obsidian';
 
-/* -------------------- LINK DETECTOR -------------------- */
+/* -------------------- 链接检测器 -------------------- */
 
 type LinkType = 'markdown' | 'wiki' | 'wikiTransclusion' | 'mdTransclusion';
 
@@ -13,25 +13,26 @@ export interface LinkMatch {
 
 /**
  *
- * @param mdFile : File, of which the text content is scanned
- * @param app : Obsidian App
- * @param fileText : Optional, If file is not Md format, provide fileText to scan
+ * @param mdFile : 要扫描的文件
+ * @param app : Obsidian应用实例
+ * @param fileText : 可选，如果文件不是Md格式，请提供fileText进行扫描
  * @returns Promise<LinkMatch[]>
  */
+
 export const getAllLinkMatchesInFile = async (mdFile: TFile, app: App, fileText?: String): Promise<LinkMatch[]> => {
     const linkMatches: LinkMatch[] = [];
     if (fileText === undefined) {
         fileText = await app.vault.read(mdFile);
     }
 
-    // --> Get All WikiLinks
+    // --> 获取所有Wiki链接
     let wikiRegex = /\[\[.*?\]\]/g;
     let wikiMatches = fileText.match(wikiRegex);
     if (wikiMatches) {
         let fileRegex = /(?<=\[\[).*?(?=(\]|\|))/;
 
         for (let wikiMatch of wikiMatches) {
-            // --> Check if it is Transclusion
+            // --> 检查是否是转义链接
             if (matchIsWikiTransclusion(wikiMatch)) {
                 let fileName = getTransclusionFileName(wikiMatch);
                 let file = app.metadataCache.getFirstLinkpathDest(fileName, mdFile.path);
@@ -46,10 +47,10 @@ export const getAllLinkMatchesInFile = async (mdFile: TFile, app: App, fileText?
                     continue;
                 }
             }
-            // --> Normal Internal Link
+            // --> 正常的内部链接
             let fileMatch = wikiMatch.match(fileRegex);
             if (fileMatch) {
-                // Web links are to be skipped
+                // 跳过网页链接
                 if (fileMatch[0].startsWith('http')) continue;
                 let file = app.metadataCache.getFirstLinkpathDest(fileMatch[0], mdFile.path);
                 let linkMatch: LinkMatch = {
@@ -63,13 +64,13 @@ export const getAllLinkMatchesInFile = async (mdFile: TFile, app: App, fileText?
         }
     }
 
-    // --> Get All Markdown Links
+    // --> 获取所有Markdown链接
     let markdownRegex = /\[(^$|.*?)\]\((.*?)\)/g;
     let markdownMatches = fileText.match(markdownRegex);
     if (markdownMatches) {
         let fileRegex = /(?<=\().*(?=\))/;
         for (let markdownMatch of markdownMatches) {
-            // --> Check if it is Transclusion
+            // --> 检查是否是转义链接
             if (matchIsMdTransclusion(markdownMatch)) {
                 let fileName = getTransclusionFileName(markdownMatch);
                 let file = app.metadataCache.getFirstLinkpathDest(fileName, mdFile.path);
@@ -84,10 +85,10 @@ export const getAllLinkMatchesInFile = async (mdFile: TFile, app: App, fileText?
                     continue;
                 }
             }
-            // --> Normal Internal Link
+            // --> 正常的内部链接
             let fileMatch = markdownMatch.match(fileRegex);
             if (fileMatch) {
-                // Web links are to be skipped
+                // 跳过网页链接
                 if (fileMatch[0].startsWith('http')) continue;
                 let file = app.metadataCache.getFirstLinkpathDest(fileMatch[0], mdFile.path);
                 let linkMatch: LinkMatch = {
@@ -103,7 +104,7 @@ export const getAllLinkMatchesInFile = async (mdFile: TFile, app: App, fileText?
     return linkMatches;
 };
 
-/* ---------- HELPERS ---------- */
+/* ---------- 辅助函数 ---------- */
 
 const wikiTransclusionRegex = /\[\[(.*?)#.*?\]\]/;
 const wikiTransclusionFileNameRegex = /(?<=\[\[)(.*)(?=#)/;
@@ -121,8 +122,9 @@ const matchIsMdTransclusion = (match: string): boolean => {
 
 /**
  * @param match
- * @returns file name if there is a match or empty string if no match
+ * @returns 如果有匹配项则返回文件名，否则返回空字符串
  */
+
 const getTransclusionFileName = (match: string): string => {
     let isWiki = wikiTransclusionRegex.test(match);
     let isMd = mdTransclusionRegex.test(match);

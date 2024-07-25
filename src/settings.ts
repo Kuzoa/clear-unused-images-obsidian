@@ -28,11 +28,11 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
     display(): void {
         let { containerEl } = this;
         containerEl.empty();
-        containerEl.createEl('h2', { text: 'Clear Images Settings' });
+        containerEl.createEl('h2', { text: '清除图片设置' });
 
         new Setting(containerEl)
-            .setName('Ribbon Icon')
-            .setDesc('Turn on if you want Ribbon Icon for clearing the images.')
+            .setName('Ribbon图标')
+            .setDesc('如果你想要在Ribbon上显示清除图片的图标，请打开此选项。')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.ribbonIcon).onChange((value) => {
                     this.plugin.settings.ribbonIcon = value;
@@ -42,9 +42,9 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName('Delete Logs')
+            .setName('删除日志提示')
             .setDesc(
-                'Turn off if you dont want to view the delete logs Modal to pop up after deletion is completed. It wont appear if no image is deleted'
+                '如果你不想在删除完成后查看删除日志的模态窗口，请关闭此选项。(要是没有图片被删除，它将不会出现)'
             )
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.logsModal).onChange((value) => {
@@ -54,12 +54,12 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName('Deleted Image Destination')
-            .setDesc('Select where you want images to be moved once they are deleted')
+            .setName('图像删除后的目标位置')
+            .setDesc('选择图像删除后要移动的位置')
             .addDropdown((dropdown) => {
-                dropdown.addOption('permanent', 'Delete Permanently');
-                dropdown.addOption('.trash', 'Move to Obsidian Trash');
-                dropdown.addOption('system-trash', 'Move to System Trash');
+                dropdown.addOption('permanent', '永久删除');
+                dropdown.addOption('.trash', '移动到Obsidian回收站');
+                dropdown.addOption('system-trash', '移动到系统回收站');
                 dropdown.setValue(this.plugin.settings.deleteOption);
                 dropdown.onChange((option) => {
                     this.plugin.settings.deleteOption = option;
@@ -68,11 +68,11 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName('Excluded Folder Full Paths')
+            .setName('排除文件夹的完整路径')
             .setDesc(
-                `Provide the FULL path of the folder names (Case Sensitive) divided by comma (,) to be excluded from clearing. 
-					i.e. For images under Personal/Files/Zodiac -> Personal/Files/Zodiac should be used for exclusion`
+                `提供要排除的文件夹名称的完整路径（区分大小写），用逗号（,）分隔。例如，对于Personal/Files/Zodiac下的图片，应该使用Personal/Files/Zodiac进行排除。`
             )
+
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedFolders).onChange((value) => {
                     this.plugin.settings.excludedFolders = value;
@@ -81,8 +81,9 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName('Exclude Subfolders')
-            .setDesc('Turn on this option if you want to also exclude all subfolders of the folder paths provided above.')
+            .setName('排除子文件夹')
+            .setDesc('如果你想要排除上面提供的文件夹路径下的所有子文件夹，请打开此选项。')
+
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.excludeSubfolders).onChange((value) => {
                     this.plugin.settings.excludeSubfolders = value;
