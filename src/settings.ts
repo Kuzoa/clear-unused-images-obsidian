@@ -44,7 +44,7 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('删除日志提示')
             .setDesc(
-                '如果你不想在删除完成后查看删除日志的模态窗口，请关闭此选项。(要是没有图片被删除，它将不会出现)'
+                '如果你不想在删除完成后看到删除日志的窗口，请关闭此选项。(要是没有图片被删除，它将不会出现)'
             )
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.logsModal).onChange((value) => {

@@ -130,13 +130,13 @@ export const deleteFilesInTheList = async (
         } else {
             if (deleteOption === '.trash') {
                 await app.vault.trash(file, false);
-                textToView += `[+] Moved to Obsidian Trash: ` + file.path + '</br>';
+                textToView += `[+] 移动到Obsidian回收站: ` + file.path + '</br>';
             } else if (deleteOption === 'system-trash') {
                 await app.vault.trash(file, true);
-                textToView += `[+] Moved to System Trash: ` + file.path + '</br>';
+                textToView += `[+] 移动到系统回收站: ` + file.path + '</br>';
             } else if (deleteOption === 'permanent') {
                 await app.vault.delete(file);
-                textToView += `[+] Deleted Permanently: ` + file.path + '</br>';
+                textToView += `[+] 永久删除: ` + file.path + '</br>';
             }
             deletedImages++;
         }

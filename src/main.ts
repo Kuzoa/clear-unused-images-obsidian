@@ -64,12 +64,12 @@ export default class OzanClearImages extends Plugin {
         var len = unusedAttachments.length;
         if (len > 0) {
             let logs = '';
-            logs += `[+] ${Util.getFormattedDate()}: Clearing started.</br>`;
+            logs += `[+] ${Util.getFormattedDate()}: 开始清理</br>`;
             Util.deleteFilesInTheList(unusedAttachments, this, this.app).then(({ deletedImages, textToView }) => {
                 logs += textToView;
                 logs += '[+] ' + deletedImages.toString() + ' 张图片已删除.</br>'
 ;
-                logs += `[+] ${Util.getFormattedDate()}: Clearing completed.`;
+                logs += `[+] ${Util.getFormattedDate()}: 清理完成`;
                 if (this.settings.logsModal) {
                     let modal = new LogsModal(logs, this.app);
                     modal.open();
