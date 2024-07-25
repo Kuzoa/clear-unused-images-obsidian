@@ -28,11 +28,11 @@ export class OzanClearImagesSettingsTab extends PluginSettingTab {
     display(): void {
         let { containerEl } = this;
         containerEl.empty();
-        containerEl.createEl('h2', { text: '清除图片设置' });
+        containerEl.createEl('h2', { text: '清除图片插件设置' });
 
         new Setting(containerEl)
-            .setName('Ribbon图标')
-            .setDesc('如果你想要在Ribbon上显示清除图片的图标，请打开此选项。')
+            .setName('左侧边栏图标')
+            .setDesc('如果你想要在左侧边栏上显示清除图片的图标，请打开此选项。')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.ribbonIcon).onChange((value) => {
                     this.plugin.settings.ribbonIcon = value;

@@ -181,15 +181,12 @@ const fileIsInExcludedFolder = (file: TFile, plugin: OzanClearImages): boolean =
 
 export const getFormattedDate = () => {
     let dt = new Date();
-    return dt.toLocaleDateString('en-GB', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    });
+    let year = dt.getFullYear();
+    let month = (dt.getMonth() + 1).toString().padStart(2, '0');
+    let day = dt.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
 };
+
 
 const addToSet = (setObj: Set<string>, value: string) => {
     if (!setObj.has(value)) {

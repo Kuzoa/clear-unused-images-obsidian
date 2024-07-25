@@ -35,7 +35,7 @@ export class LogsModal extends Modal {
         const buttonWrapper = contentEl.createEl('div');
         buttonWrapper.addClass('unused-images-center-wrapper');
         // 创建一个button元素，用于关闭模态窗口
-        const closeButton = buttonWrapper.createEl('button', { text: 'Close' });
+        const closeButton = buttonWrapper.createEl('button', { text: '关闭' });
         closeButton.addClass('unused-images-button');
         // 添加点击事件监听器，点击按钮时关闭模态窗口
         closeButton.addEventListener('click', () => {
